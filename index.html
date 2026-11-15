@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>兼職諮詢師日抽成計算系統</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans TC',sans-serif;background:#F5F2EB;color:#2A2620;min-height:100vh}
+.hd{background:linear-gradient(135deg,#F2D98C 0%,#E0C97E 55%,#C4A85E 100%);padding:2.25rem 1.5rem 2rem;text-align:center}
+.hd-sub{font-size:0.62rem;letter-spacing:.28em;color:rgba(26,20,8,.55);text-transform:uppercase;margin-bottom:.5rem}
+.hd-title{font-size:1.3rem;font-weight:700;letter-spacing:.14em;color:#1A1408;margin-bottom:.3rem}
+.hd-desc{font-size:0.72rem;color:rgba(26,20,8,.5);letter-spacing:.06em}
+.hd-line{width:40px;height:1px;background:rgba(26,20,8,.2);margin:1rem auto 0}
+.page{max-width:860px;margin:0 auto;padding:2rem 1rem 5rem}
+.card{background:#FDFCF8;border:1px solid #E4DECE;border-radius:16px;padding:1.5rem;margin-bottom:1.25rem}
+.sec{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+.sec::before{content:'';width:3px;height:14px;background:#C4A85E;border-radius:2px;flex-shrink:0}
+.sec span{font-size:0.68rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#C4A85E}
+.month-row{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem}
+.month-row label{font-size:0.78rem;font-weight:500;color:#5A5248;white-space:nowrap}
+.month-row input{height:40px;padding:0 12px;border:1px solid #D4CAB8;border-radius:12px;font-size:0.95rem;font-family:inherit;background:#F5F2EB;color:#2A2620;transition:border-color .2s}
+.month-row input:focus{outline:none;border-color:#C4A85E}
+.day-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
+@media(max-width:600px){.day-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:380px){.day-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.dc{background:#F5F2EB;border:1px solid #E4DECE;border-radius:12px;padding:7px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;transition:border-color .2s,background .2s}
+.dc.on{border-color:#C4A85E;background:#FDF8EE}
+.dn{font-size:0.65rem;font-weight:500;color:#9A9088}
+.dc.on .dn{color:#8A6A2A}
+.di{width:100%;height:30px;text-align:center;border:none;background:transparent;font-size:0.82rem;font-family:inherit;color:#2A2620;padding:0 2px}
+.di:focus{outline:none}
+.di::placeholder{color:#C8C0B0;font-size:0.72rem}
+.dr{font-size:0.6rem;color:#B8963A;min-height:13px;font-weight:500}
+.dk{font-size:0.7rem;font-weight:700;color:#5A5248;min-height:14px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem}
+@media(max-width:400px){.stats{grid-template-columns:1fr}}
+.stat{background:#FDFCF8;border:1px solid #E4DECE;border-radius:16px;padding:1.25rem 1.5rem}
+.sl{font-size:0.72rem;color:#9A9088;letter-spacing:.05em;margin-bottom:6px}
+.sv{font-size:1.4rem;font-weight:700;color:#2A2620}
+.total{background:linear-gradient(135deg,#F2D98C 0%,#E0C97E 55%,#C4A85E 100%);border-radius:16px;padding:1.25rem 1.5rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.tl{font-size:0.78rem;font-weight:500;letter-spacing:.1em;color:rgba(26,20,8,.6)}
+.tv{font-size:1.8rem;font-weight:700;color:#1A1408}
+.tier-wrap{overflow-x:auto;margin:0 -1.5rem}
+table{width:100%;border-collapse:collapse;font-size:0.8rem}
+thead tr{background:linear-gradient(135deg,#F2D98C 0%,#E0C97E 55%,#C4A85E 100%)}
+thead th{font-size:0.67rem;font-weight:500;letter-spacing:.08em;color:#3A2E10;text-align:left;padding:10px 14px;white-space:nowrap}
+tbody td{padding:9px 14px;border-bottom:1px solid #E4DECE;color:#5A5248}
+tbody tr:last-child td{border-bottom:none}
+tbody tr.hit td{background:#FDF8EE;color:#2A2620;font-weight:500}
+tbody tr.hit td:first-child{box-shadow:inset 3px 0 0 #C4A85E}
+footer{text-align:center;font-size:0.68rem;color:#9A9088;letter-spacing:.08em;margin-top:2.5rem}
+/* 員工版：霧鼠尾草綠、奶油白、香檳金 */
+body{background:#F0F3EE;color:#30483D}
+.hd{background:linear-gradient(135deg,#E1E9DC 0%,#CDDCCB 55%,#B5CBB8 100%)}
+.hd-sub,.hd-desc{color:#526C5A}.hd-title{color:#2E493A}.hd-line{background:#B6A47A}
+.card,.stat{background:#FFFDF7;border-color:#DBE3D7;box-shadow:0 8px 24px #30483D04}
+.sec::before{background:#B6A47A}.sec span{color:#617A65}
+.month-row label{color:#4F6555}.month-row input{background:#F0F3EE;border-color:#CDD8C9;color:#30483D}
+.month-row input:focus{border-color:#6B8A70}
+.dc{background:#F0F3EC;border-color:#DFE5D9}.dc.on{border-color:#8FA88F;background:#EAF1E6}
+.dn{color:#6D7D6C}.dc.on .dn{color:#48664E}.di{color:#30483D}.di::placeholder{color:#A8B3A3}
+.dc:focus-within{outline:2px solid #6B8A70;outline-offset:2px}
+.dr{color:#59734F}.dk{color:#304F3B}.sl{color:#6D7D6C}.sv{color:#30483D}
+.total{background:linear-gradient(135deg,#DEE8D8 0%,#CDDDC9 55%,#B8CFBA 100%);border:1px solid #B4C7AF}
+.tl{color:#49614D}.tv{color:#294B35}footer{color:#73816F}
+</style>
+</head>
+<body>
+<div class="hd">
+  <div class="hd-sub">Yours Aesthetic Medical Clinic</div>
+  <div class="hd-title">兼職諮詢師日抽成計算系統</div>
+  <div class="hd-desc">每日業績分別計算抽成，再加總為本月獎金</div>
+  <div class="hd-line"></div>
+</div>
+
+<div class="page">
+  <div class="card">
+    <div class="sec"><span>每日業績輸入</span></div>
+    <div class="month-row">
+      <label for="mp">選擇月份</label>
+      <input type="month" id="mp">
+    </div>
+    <div class="day-grid" id="dg"></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="sl">本月總業績</div><div class="sv" id="ts">$0</div></div>
+    <div class="stat"><div class="sl">有抽成天數</div><div class="sv" id="cd">0 天</div></div>
+  </div>
+
+  <div class="total">
+    <span class="tl">本月日抽成總額</span>
+    <span class="tv" id="tc">$0</span>
+  </div>
+
+  <footer>悅姿醫美診所 · 僅供內部計算參考使用</footer>
+</div>
+
+<script>
+const TIERS=[
+  {min:0,max:49999,rate:0},
+  {min:50000,max:74999,rate:0.0025},
+  {min:75000,max:99999,rate:0.005},
+  {min:100000,max:124999,rate:0.0075},
+  {min:125000,max:149999,rate:0.01},
+  {min:150000,max:174999,rate:0.015},
+  {min:175000,max:199999,rate:0.02},
+  {min:200000,max:224999,rate:0.025},
+  {min:225000,max:Infinity,rate:0.03},
+];
+function getRate(v){return(TIERS.find(t=>v>=t.min&&v<=t.max)||TIERS[0]).rate}
+function getDays(ym){const[y,m]=ym.split('-').map(Number);return new Date(y,m,0).getDate()}
+function initMonth(){const n=new Date();document.getElementById('mp').value=`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`}
+function render(){
+  const ym=document.getElementById('mp').value;if(!ym)return;
+  const d=getDays(ym),g=document.getElementById('dg');
+  const old=[...g.querySelectorAll('.di')].map(i=>i.value);
+  g.innerHTML='';
+  for(let i=0;i<d;i++){
+    const c=document.createElement('div');c.className='dc';c.id='c'+i;
+    c.innerHTML=`<div class="dn">${i+1}日</div><input class="di" aria-label="${i+1}日業績" type="number" min="0" placeholder="—" data-i="${i}" oninput="upd(this)"><div class="dr" id="r${i}"></div><div class="dk" id="k${i}"></div>`;
+    g.appendChild(c);
+  }
+  g.querySelectorAll('.di').forEach((inp,i)=>{if(old[i]){inp.value=old[i];upd(inp)}});
+  calc();
+}
+function upd(el){
+  const i=el.dataset.i,v=el.value===''?0:Number(el.value);
+  const c=document.getElementById('c'+i),r=document.getElementById('r'+i),k=document.getElementById('k'+i);
+  if(el.value===''){c.classList.remove('on');r.textContent='';k.textContent='';calc();return}
+  const rt=getRate(v),cm=Math.round(v*rt);
+  c.classList.add('on');
+  r.textContent=rt>0?(rt*100).toFixed(2)+'%':'未達門檻';
+  k.textContent=rt>0?'$'+cm.toLocaleString():'';
+  calc();
+}
+function calc(){
+  const ins=document.querySelectorAll('.di');
+  let ts=0,tc=0,cd=0,hitRate=null;
+  ins.forEach(inp=>{
+    if(inp.value==='')return;
+    const v=Number(inp.value),rt=getRate(v),cm=Math.round(v*rt);
+    ts+=v;tc+=cm;if(cm>0)cd++;
+  });
+  document.getElementById('ts').textContent='$'+ts.toLocaleString();
+  document.getElementById('tc').textContent='$'+tc.toLocaleString();
+  document.getElementById('cd').textContent=cd+' 天';
+}
+document.getElementById('mp').addEventListener('input',render);
+initMonth();render();
+</script>
+</body>
+</html>
