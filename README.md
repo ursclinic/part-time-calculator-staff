@@ -1,6 +1,2 @@
-# 兼職諮詢師日抽成計算系統｜員工版
-
-霧鼠尾草綠配色。保留每日比例與獎金，移除下方級距表。
-沿用原版公式：每日業績乘對應比例，每日四捨五入至整元後加總。
-
-將 index.html 放入 GitHub 儲存庫最外層，再開啟 Settings → Pages → main → / (root)。
+將 index.html 替換至 part-time-calculator-staff 儲存庫最外層。
+更新標題與配色，原有公式及功能維持不變。
